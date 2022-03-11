@@ -1,64 +1,35 @@
-import React, {useState, useContext} from "react";
-import {View, StyleSheet, TouchableOpacity, KeyboardAvoidingView} from "react-native";
-import {Input, Text, Button} from "react-native-elements";
-import Spacer from "../components/Spacer";
+import React, {useContext} from "react";
+import {View, StyleSheet, KeyboardAvoidingView} from "react-native";
 import {Context as AuthContext} from "../context/AuthContext";
+import AuthForm from "../components/AuthForm";
+import NavLink from "../components/NavLink";
+import {NavigationEvents} from "react-navigation";
 
 const SignUpScreen = ({navigation}) => {
-    const {state, signup} = useContext(AuthContext)
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const {state, signup, clearErrorMessage} = useContext(AuthContext)
 
-    return <View style={styles.container}>
-        <Spacer>
-            <Text h3>Sign up for Tracker</Text>
-        </Spacer>
-        <Input
-            label="Email"
-            value={email}
-            onChangeText={(newEmail) => setEmail(newEmail)}
-            autoCapitalize="none"
-            autoCorrect={false}
+    return <KeyboardAvoidingView style={styles.container} behavior="height">
+        <NavigationEvents onWillFocus={clearErrorMessage}/>
+        <AuthForm
+            headerText="Sign up for tracker"
+            errorMessage={state.errorMessage}
+            submitButtonTitle="Sign up"
+            onSubmit={signup}
         />
-        <Spacer/>
-        <Input
-            secureTextEntry
-            label="Password"
-            value={password}
-            onChangeText={(newPass) => setPassword(newPass)}
-            autoCapitalize="none"
-            autoCorrect={false}
+        <NavLink
+            routName="SignIn"
+            text="Already have an account? Sign in instead!"
         />
-        {state.errorMessage
-            ? <Text style={styles.error}>{state.errorMessage}</Text>
-            : null}
-        <Spacer>
-            <Button title="Sign up" onPress={() => signup({email, password})}/>
-        </Spacer>
-        <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
-            <Spacer>
-                <Text style={styles.link}>Already have an account? Sign in instead</Text>
-            </Spacer>
-        </TouchableOpacity>
 
-    </View>
+    </KeyboardAvoidingView>
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
-        marginBottom: 200
+        marginBottom: 180
     },
-    error: {
-        marginLeft: 15,
-        marginTop: 10,
-        fontSize: 16,
-        color: "red"
-    },
-    link: {
-        color: "blue"
-    }
 })
 
 SignUpScreen.navigationOptions = () => {
